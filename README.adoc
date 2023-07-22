@@ -1,0 +1,268 @@
+= OpenSCD Plugin: {plugin-name} Editor
+:plugin-name: Subscriber Later Binding - SEL
+:sectnums:
+:sectlinks:
+:toc:
+:imagesdir: docs/media
+:icons: font
+:experimental:
+:uri-action-translate-ci-bundle: https://jakobvogelsang.github.io/oscd-action-translate/oscd-action-translate.js
+:uri-openscd-core: https://github.com/openscd/open-scd-core#readme
+:uri-openscd: https://github.com/openscd
+:uri-openscd-app: https://openscd.github.io
+:uri-openscd-core-app: https://openscd.github.io/open-scd/
+:uri-openscd-core-plugin: pass:v[https://openscd.github.io/open-scd/?plugins=%7B%22menu%22:%5B%7B%22name%22:%22Open%20File%22,%22translations%22:%7B%22de%22:%22Datei%20%C3%B6ffnen%22%7D,%22icon%22:%22folder_open%22,%22active%22:true,%22src%22:%22https://openscd.github.io/oscd-open/oscd-open.js%22%7D,%7B%22name%22:%22Save%20File%22,%22translations%22:%7B%22de%22:%22Datei%20speichern%22%7D,%22icon%22:%22save%22,%22active%22:true,%22src%22:%22https://openscd.github.io/oscd-save/oscd-save.js%22%7D,%7B%22name%22:%22Communications%20Export%22,%22translations%22:%7B%22de%22:%22Kommunikationsexport%22,%22pt%22:%22Exporta%C3%A7%C3%A3o%20de%20Comunica%C3%A7%C3%B5es%22%7D,%22icon%22:%22sim_card_download%22,%22active%22:true,%22requireDoc%22:true,%22src%22:%22/dist/oscd-subscriber-lb-sel.js%22%7D%5D,%22editor%22:%5B%5D%7D]
+// TIP:
+// the above URI is done by taking the plugins object from demo.html (without strings) and updating to the correct {uri-ci-bundle} value and then in the browser calling:
+// console.log(`https://openscd.github.io/open-scd/?plugins=${encodeURI(JSON.stringify(plugins))}`)
+// then substitute the value within the pass:v[<url>]
+:uri-openwc: https://github.com/open-wc/open-wc
+:uri-plugin: https://github.com/danyill/oscd-subscriber-lb-sel
+:uri-ci-bundle: https://danyill.github.io/oscd-subscriber-lb-sel/oscd-subscriber-lb-sel.js
+:uri-material-icons: https://fonts.google.com/icons
+:uri-openscd-core-plugin-demo: https://danyill.github.io/oscd-subscriber-lb-sel/index.deploy.html
+:source-highlighter: highlight.js
+
+== What is this?
+
+This plugin works with the Subscriber Later Binding plugin to provide enhancements for SEL devices:
+
+* Automatic mapping for double position values (DPC, Dbpos)
+* Automatic multi-phase SV mapping
+
+for subscribing and unsubscribing.
+
+* This is a plugin for {uri-openscd-core}[open-scd-core], the core
+editor engine for {uri-openscd}[OpenSCD].
+
+* This plugin is a web component and follows the
+{uri-openwc}[open-wc] recommendations.
+
+* This plugin uses the link:LICENSE[Apache License] and is intended for you to use, study, share and improve.
+
+{uri-openscd-core-plugin-demo}[Try it out online]!
+
+Feel free to log issues to request fixes, improvements or new features.
+
+== How it works
+
+. For `ExtRef` elements with an intAddr of the form `IAS`, `IBU_2`, `VAZ`, multiple subscriptions will be done if:
+
+** The first character `I` or `V` matches `TCTR` and `TVTR` for the `lnClass` in an `FCDA` with which it is being matched.
+** the `serviceType` is `SMV`
+** The second character matches the phase designation `A`, `B` and `C` and is used to form a triplet.
+** The remaining characters match a terminal or side (e.g. the `S` or or the `V` or `S_3` terminal).
+
+. For `ExtRef` elements which are of the basic type `Dbpos` with a CDC of `DPC` (double point control), if possible the FCDA will be subscribed to two adjacent `ExtRef` elements. The first subscription represents the "closed" indication (A contact) and the second subscription represents the "open" position (B contact).
+
+Other features can be added on request or scoped more tightly to specific SEL IEDs.
+
+== Using the Plugin
+
+Follow the steps in <<Loading the Plugin>>.
+Once the plugin is loaded:
+
+. The plugin provides a menu option. Go to the menu in the top left and click on the plugin name.
+
+. Then click enabled and then "Close".
++
+image::../../test/screenshots/baseline/configure the plugin is initially disabled-Chromium.png[]
+
+. In either the publisher or subscriber view, click on the settings icon (a cog) and check that "Allow External Plugins is checked.".
+
+. The plugin will automatic add or remove subscriptions as required.
+
+== Loading the Plugin
+
+=== Online Using the Latest open-scd-core
+
+==== Using a URL
+
+Open SCD core allows plugins to be loaded from a URL.
+
+You can click on {uri-openscd-core-plugin}[this link] to trial this plugin.
+
+In this view it is without theming and only presents this plugin along with the open and save plugins.
+
+==== Manually
+
+. The latest core is available at {uri-openscd-core-app}.
+
+. Go to menu:Menu[Add plugins...]
+
+. Select Cancel - this is an editor plugin.
+
+. Select OK to required a loaded document.
+
+. Choose a plugin name of '{plugin-name}'.
+
+. Choose a plugin icon of 'link'
+
+. Provide a plugin source URI of: {uri-ci-bundle}
+
+. Click OK on the summary, it should indicate the parameters previously entered.
+
+. Open a file and enjoy!
+
+=== Locally for testing
+
+. Clone this project:
++
+[subs=+attributes]
+....
+$ git clone {uri-plugin}
+....
+
+. Install dependencies
+
+  $ npm i
+
+. Start up a demo server 
+
+  $ npm run start
+
+. Open in your browser locally at http://localhost:8000/demo/
+
+=== As part of the OpenSCD distribution
+
+TIP: OpenSCD is transitioning to use of `open-scd-core`, these instructions will require updating at the end of this transition.
+
+. Open your OpenSCD distribution or use {uri-openscd-app}.
+
+. Create a custom extension by going to menu:menu[Extensions>Add Custom Extension].
+
+. Enter the name '{plugin-name}', select 'Menu entry' and enter {uri-ci-bundle} as the URL.
++
+This is the URL of the bundle built by CI and is always the latest pre-release version of this plugin.
++
+.OpenSCD Add Custom Extension Screen
+image::screenshot-add-extension.png[width=300]
+
+. Click on menu:Add[].
+
+. This plugin is now available in the menu entry.
+
+=== As part of your own distribution
+
+==== Within the current OpenSCD distribution
+
+. Within the current OpenSCD distribution, plugins are stored in the `public/js/plugins.js` folder. 
+Each plugin appears in the following form:
++
+[source,js,subs=+attributes]
+----
+{
+    name: '{plugin-name}', // <.>
+    src: '{uri-ci-bundle}', //  <.>
+    icon: 'sim_card_download', // <.>
+    default: true, // <.>
+    kind: 'menu', // <.>
+    requireDoc: true, // <.>
+    position: 'middle' // <.>
+  }
+----
+<.> Name of the plugin which appears in the editor menu at top of screen
+<.> URL which can be a local or remote resource. 
+For a local resource, begins without a forward slash, e.g. `plugins/oscd-subscriber-lb-sel/dist/oscd-subscriber-lb-sel.js`. 
+In this case what is shown is loading a plugin from the build process.
+<.> A material icon, see others at {uri-material-icons}[Material Symbols and Icons]
+<.> Whether the plugin is enabled by default or has to be enabled in the plugins menu
+<.> The type of plugin, either `menu` or `editor`. This is an `editor` plugin.
+<.> Whether a document must be loaded for this plugin to be available
+<.> A string, either `top`, `middle` or `bottom` to give a location in the menu. 
+Otherwise inferred from the order in the file relative to other plugins.
+
+. You need to copy an entry like the above, ensure the `src` URL resolves and the plugin should be loaded when the distribution is built.
+
+. If you are building locally you likely need to run an `npm run bundle` command in each plugin to make the `dist` folder, containing a single JavaScript file with the plugin available to OpenSCD.
+
+==== Within an OpenSCD core distribution
+
+Within an OpenSCD core distribution, plugins are also loaded from a json file with a slightly different schema.
+
+. Typically the distribution will be served from a static web page and within the web page there will be a plugins property declared on an `open-scd` object, for instance:
++
+[source,js,subs=+attributes]
+----
+include::demo/index.html[tag=plugins]
+----
+
+. This plugin is an editor plugin, editor plugins are an array of JSON of the following form:
++
+[source,js,subs=+attributes]
+----
+{
+  "name": "{plugin-name}", // <.>
+  "translations": { // <.>
+    "de": "Kommunikationsexport", 
+    "pt":"Exportação de Comunicações"
+  },
+  "icon": "sim_card_download", // <.>
+  "active": true, // <.>
+  "requireDoc": true, // <.>
+  "src": "/dist/oscd-subscriber-lb-sel.js" // <.>
+}
+----
+<.> Name of the plugin which appears in the editor menu at top of screen
+<.> Translations of the plugin name as required using standard locale names.
+<.> A material icon, see others at {uri-material-icons}[Material Symbols and Icons]
+<.> Whether the plugin is enabled by default or has to be enabled in the plugins menu
+<.> Whether a document must be loaded for this plugin to be available
+<.> URL which can be a local or remote resource. 
+For a local resource, begins with a forward slash, e.g. `plugins/oscd-subscriber-lb-sel/dist/oscd-subscriber-lb-sel.js`. 
+In this case what is shown is loading a plugin from the internet using the continuous integration build process.
+
+. You need to copy an entry like the above, ensure the `src` URL resolves and the plugin should be loaded when the distribution is built.
+
+. If you are building locally you likely need to run an `npm run bundle` command in each plugin to make the `dist` folder, containing a single JavaScript file with the plugin available to OpenSCD.
+
+== Development
+
+=== Linting and formatting
+
+To scan the project for linting and formatting errors, run
+
+[source,bash]
+----
+npm run lint
+----
+
+To automatically fix linting and formatting errors, run
+
+[source,bash]
+----
+npm run format
+----
+
+=== Testing with Web Test Runner
+
+To execute a single test run:
+
+[source,bash]
+----
+npm run test
+----
+
+To run the tests in interactive watch mode run:
+
+[source,bash]
+----
+npm run test:watch
+----
+
+=== Tooling configs
+
+For most of the tools, the configuration is in the `package.json` to reduce the number of files in your project.
+
+If you customize the configuration a lot, you can consider moving them to individual files.
+
+=== Local Demo with `web-dev-server`
+
+To run a local development server that serves the basic demo located in `demo/index.html`
+
+[source,bash]
+----
+npm start
+----
+
+© 2023 Daniel Mulholland
