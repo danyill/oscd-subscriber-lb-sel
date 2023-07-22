@@ -46,7 +46,7 @@ function decodeIntAddr(intAddr: string): string {
   const firstChar = intAddr.charAt(0);
   const secondChar = intAddr.charAt(1);
 
-  if (firstChar === 'I' && ['A', 'B', 'C'].includes(secondChar)) {
+  if (['I', 'V'].includes(firstChar) && ['A', 'B', 'C'].includes(secondChar)) {
     return `${firstChar}${intAddr.slice(2)}`;
   }
 
