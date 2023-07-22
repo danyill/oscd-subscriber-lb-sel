@@ -15,3 +15,6 @@
 
 # IDE
 /.idea
+
+# visual test fails
+/test/screenshots/failed
