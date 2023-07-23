@@ -6194,7 +6194,6 @@ function getDataAttributes(fcda) {
         lnInst,
         doName,
         daName,
-        fc,
     };
 }
 function createSubscribeAction(connection, parent) {
