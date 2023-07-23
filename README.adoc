@@ -68,7 +68,7 @@ Once the plugin is loaded:
 +
 image::../../test/screenshots/baseline/configure the plugin is initially disabled-Chromium.png[]
 
-. In either the publisher or subscriber view, click on the settings icon (a cog) and check that "Allow External Plugins is checked.".
+. In either the publisher or subscriber view, click on the settings icon (a cog) and check that "Allow External Plugins" is checked.
 
 . The plugin will automatic add or remove subscriptions as required.
 
