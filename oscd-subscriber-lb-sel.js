@@ -6728,9 +6728,10 @@ class SubscriberLaterBindingSEL extends s {
         slot="primaryAction"
         icon="done"
         @click="${() => {
+            var _a, _b;
             // TODO: Remove when open-scd uses later version of mwc-components.
             this.enabled =
-                this.enabledUI.selected || this.enabledUI.checked;
+                (_b = (_a = this.enabledUI.selected) !== null && _a !== void 0 ? _a : this.enabledUI.checked) !== null && _b !== void 0 ? _b : false;
             localStorage.setItem('oscd-subscriber-lb-sel', `${this.enabled}`);
             if (this.dialogUI)
                 this.dialogUI.close();
